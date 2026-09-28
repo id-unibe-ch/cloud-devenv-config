@@ -53,6 +53,11 @@ in
     ];
   };
 
+  tasks."devenv:git-hooks:run".after = [
+    "terraform:init"
+    "tflint:init"
+  ];
+
   git-hooks.hooks = {
     trim-trailing-whitespace.enable = true;
     check-added-large-files.enable = true;
