@@ -67,7 +67,10 @@ in
     check-toml.enable = true;
     check-executables-have-shebangs.enable = true;
     terraform-format.enable = true;
-    terraform-validate.enable = true;
+    terraform-validate = {
+      enable = true;
+      package = config.languages.terraform.package;
+    };
     tflint = {
       enable = true;
       name = "TFLint";
