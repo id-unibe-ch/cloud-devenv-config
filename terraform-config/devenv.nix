@@ -47,6 +47,7 @@ in
   tasks."tflint:init" = {
     exec = "tflint --init";
     before = [ "devenv:enterShell" ];
+    after = [ "terraform:init" ];
     execIfModified = [
       ".tflint.hcl"
     ];
