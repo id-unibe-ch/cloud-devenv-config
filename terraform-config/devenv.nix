@@ -67,10 +67,16 @@ in
     check-toml.enable = true;
     check-executables-have-shebangs.enable = true;
     terraform-format.enable = true;
-    terraform-validate = {
+
+    terraform-validate-root = {
       enable = true;
-      package = config.languages.terraform.package;
+      name = "Terraform validate (root module)";
+      entry = "terraform validate";
+      files = "\\.(tf|tofu)$";
+      pass_filenames = false;
+      require_serial = true;
     };
+
     tflint = {
       enable = true;
       name = "TFLint";
