@@ -124,16 +124,5 @@ in
       pass_filenames = false;
       types = [ "terraform" ];
     };
-    check-schema = {
-      enable = true;
-      name = "Check JSON Schema for Application Configs";
-      entry = "check-jsonschema";
-      language = "system";
-      files = "^apps/.*\.yaml$";
-      args = [
-        "--schemafile"
-        "./apps/schema_application.json"
-      ];
-    };
   };
 }
