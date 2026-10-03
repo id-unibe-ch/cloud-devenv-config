@@ -122,7 +122,10 @@ in
         "."
       ];
       pass_filenames = false;
-      types = [ "terraform" ];
+      types = [
+        "terraform"
+        "markdown"
+      ];
     };
   };
 }
