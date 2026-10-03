@@ -29,6 +29,8 @@ in
     pkgs.tflint
     pkgs.tf-summarize
     pkgs.marksman
+    pkgs.yaml-language-server
+    pkgs.vscode-json-languageserver
   ];
 
   languages.terraform = {
