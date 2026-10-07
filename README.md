@@ -5,6 +5,7 @@ This repository contains shared [devenv.sh](https://devenv.sh) configuration whi
 Following base configurations are provided:
 
 - [Terraform](/terraform-config/README.md)
+- [Zensical](/zensical-config/README.md) for projects managing documentation based on Zensical static code generator
 
 ## Usage
 
