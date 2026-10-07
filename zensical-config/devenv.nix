@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  devcontainer.enable = true;
+
   packages = [
     pkgs.marksman
   ];

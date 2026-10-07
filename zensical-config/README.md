@@ -32,5 +32,8 @@ The `devenv.nix` can be an empty configuration block:
 ```nix
 { ... }:
 {
+  enterShell = ''
+    echo Run \`zensical serve\` to start the local preview server
+  '';
 }
 ```
