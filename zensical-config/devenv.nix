@@ -6,6 +6,9 @@
     pkgs.marksman
   ];
 
+  # Create symlink to pinned markdownlint configuration file
+  files.".markdownlint.yaml".text = builtins.readFile ./.markdownlint.yaml;
+
   languages.python = {
     enable = true;
     venv = {
