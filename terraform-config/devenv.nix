@@ -1,14 +1,8 @@
-{
-  pkgs,
-  lib,
-  config,
-  inputs,
-  ...
-}:
-# Disable python3-ecdsa test which fail in container.
-#
-# The library is used by checkov.
+{ pkgs, ... }:
 let
+  # Disable python3-ecdsa test which fail in container.
+  #
+  # The library is used by checkov.
   ecdsa = pkgs.python3Packages.ecdsa.overridePythonAttrs (oldAttrs: {
     disabledTests = (oldAttrs.disabledTests or [ ]) ++ [
       "test_multithreading_with_interrupts"
@@ -39,6 +33,10 @@ in
   };
 
   devcontainer.enable = true;
+
+  # Create symlink to pinned configuration files
+  files.".terraform-docs.yml".text = builtins.readFile ./.terraform-docs.yml;
+  files.".tflint.hcl".text = builtins.readFile ./.tflint.hcl;
 
   tasks."terraform:init" = {
     exec = "terraform init -backend=false";
@@ -73,7 +71,8 @@ in
     terraform-validate-root = {
       enable = true;
       name = "Terraform validate (root module)";
-      entry = "terraform validate";
+      entry = "${pkgs.terraform}/bin/terraform";
+      args = [ "validate" ];
       files = "\\.(tf|tofu)$";
       pass_filenames = false;
       require_serial = true;
@@ -82,16 +81,17 @@ in
     tflint = {
       enable = true;
       name = "TFLint";
-      entry = "tflint";
+      entry = "${pkgs.tflint}/bin/tflint";
       files = "\.(tf|tofu)$";
       excludes = [ "\.terraform/.*$" ];
       language = "system";
       pass_filenames = false;
     };
+
     checkov = {
       enable = true;
       name = "Checkov";
-      entry = "checkov";
+      entry = "${checkov}/bin/checkov";
       args = [
         "--framework"
         "terraform"
@@ -104,20 +104,27 @@ in
       require_serial = true;
       pass_filenames = false;
     };
+
     trivy = {
       enable = true;
       name = "Trivy";
-      entry = "trivy conf . --exit-code=1";
+      entry = "${pkgs.trivy}/bin/trivy";
+      args = [
+        "conf"
+        "."
+        "--exit-code=1"
+      ];
       files = "\.(tf|tofu|tfvars)$";
       language = "system";
       require_serial = true;
       pass_filenames = false;
     };
+
     terraform-docs = {
       enable = true;
       name = "terraform-docs";
       language = "system";
-      entry = "terraform-docs";
+      entry = "${pkgs.terraform-docs}/bin/terraform-docs";
       args = [
         "-c"
         "./.terraform-docs.yml"
