@@ -1,0 +1,13 @@
+formatter: "markdown"
+
+recursive:
+  enabled: true
+
+output:
+  file: "README.md"
+  template: "<!-- BEGIN_TF_DOCS -->\n{{ .Content }}\n<!-- END_TF_DOCS -->"
+
+header-from: header.md
+
+settings:
+  lockfile: false
