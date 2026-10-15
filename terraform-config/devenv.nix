@@ -13,6 +13,26 @@ let
       dependency: if (dependency.pname or null) == "ecdsa" then ecdsa else dependency
     ) oldAttrs.dependencies;
   });
+
+  # Pin tflint to a specific version independent of nixpkgs.
+  tflintFromSource = pkgs.tflint.overrideAttrs (finalAttrs: oldAttrs: {
+    version = "0.64.0";
+    src = pkgs.fetchFromGitHub {
+      owner = "terraform-linters";
+      repo = "tflint";
+      tag = "v${finalAttrs.version}";
+      hash = "sha256-5ure5MysZsMcie75ox3gWEETqhor8wRqylQweuDu1qQ=";
+    };
+    vendorHash = "sha256-o59/JqIywhqKMkcyq/r1XRE9ldk/dE2v3Qj9IXq0G8s=";
+  });
+
+  tflintPkgs = import (builtins.fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/55ba7f49ef2962b42cbd126522b7df5f95037679.tar.gz";
+    sha256 = "1c84q65az45wzfqcnhjw20rv46mi20a0qp7s7xgxdff9amr86vmj";
+  }) { system = pkgs.stdenv.system; };
+  tflintFromNixpkgs = tflintPkgs.tflint;
+
+  tflint = tflintFromSource;
 in
 {
   packages = [
@@ -20,7 +40,7 @@ in
     checkov
     pkgs.terraform-docs
     pkgs.check-jsonschema
-    pkgs.tflint
+    tflint
     pkgs.tf-summarize
     pkgs.marksman
     pkgs.yaml-language-server
@@ -81,7 +101,7 @@ in
     tflint = {
       enable = true;
       name = "TFLint";
-      entry = "${pkgs.tflint}/bin/tflint";
+      entry = "${tflint}/bin/tflint";
       files = "\.(tf|tofu)$";
       excludes = [ "\.terraform/.*$" ];
       language = "system";
