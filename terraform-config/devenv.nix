@@ -37,6 +37,7 @@ in
   # Create symlink to pinned configuration files
   files.".terraform-docs.yml".text = builtins.readFile ./.terraform-docs.yml;
   files.".tflint.hcl".text = builtins.readFile ./.tflint.hcl;
+  files."trivy.yaml".text = builtins.readFile ./trivy.yaml;
 
   tasks."terraform:init" = {
     exec = "terraform init -backend=false";
@@ -110,7 +111,9 @@ in
       name = "Trivy";
       entry = "${pkgs.trivy}/bin/trivy";
       args = [
-        "conf"
+        "-c"
+        "trivy.yaml"
+        "config"
         "."
         "--exit-code=1"
       ];
