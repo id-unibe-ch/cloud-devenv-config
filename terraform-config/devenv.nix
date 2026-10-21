@@ -134,7 +134,7 @@ in
         "."
       ];
       pass_filenames = false;
-      types = [
+      types_or = [
         "terraform"
         "markdown"
       ];
