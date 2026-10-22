@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, multiverse, ... }:
 let
   # Disable python3-ecdsa test which fail in container.
   #
@@ -8,28 +8,40 @@ let
       "test_multithreading_with_interrupts"
     ];
   });
-  checkov = pkgs.checkov.overridePythonAttrs (oldAttrs: {
+
+  checkov = multiverse.checkov."3.3.9".overridePythonAttrs (oldAttrs: {
     dependencies = map (
       dependency: if (dependency.pname or null) == "ecdsa" then ecdsa else dependency
     ) oldAttrs.dependencies;
   });
+
+  checkJsonschema = multiverse.check-jsonschema."0.38.0";
+  marksman = multiverse.marksman."2026-02-08";
+  terraform = multiverse.terraform."1.15.9";
+  terraformDocs = multiverse.terraform-docs."0.24.0";
+  tflint = multiverse.tflint."0.64.0";
+  tfSummarize = multiverse.tf-summarize."0.3.20";
+  trivy = multiverse.trivy."0.76.0";
+  vscodeJsonLanguageserver = multiverse.vscode-json-languageserver."1.138.0";
+  yamlLanguageServer = multiverse.yaml-language-server."1.25.0";
 in
 {
   packages = [
-    pkgs.trivy
     checkov
-    pkgs.terraform-docs
-    pkgs.check-jsonschema
-    pkgs.tflint
-    pkgs.tf-summarize
-    pkgs.marksman
-    pkgs.yaml-language-server
-    pkgs.vscode-json-languageserver
+    checkJsonschema
+    marksman
+    terraform
+    terraformDocs
+    tflint
+    tfSummarize
+    trivy
+    vscodeJsonLanguageserver
+    yamlLanguageServer
   ];
 
   languages.terraform = {
     enable = true;
-    version = "1.15.9";
+    package = terraform;
   };
 
   devcontainer.enable = true;
@@ -72,7 +84,7 @@ in
     terraform-validate-root = {
       enable = true;
       name = "Terraform validate (root module)";
-      entry = "${pkgs.terraform}/bin/terraform";
+      entry = "${terraform}/bin/terraform";
       args = [ "validate" ];
       files = "\\.(tf|tofu)$";
       pass_filenames = false;
@@ -82,7 +94,7 @@ in
     tflint = {
       enable = true;
       name = "TFLint";
-      entry = "${pkgs.tflint}/bin/tflint";
+      entry = "${tflint}/bin/tflint";
       files = "\.(tf|tofu)$";
       excludes = [ "\.terraform/.*$" ];
       language = "system";
@@ -109,7 +121,7 @@ in
     trivy = {
       enable = true;
       name = "Trivy";
-      entry = "${pkgs.trivy}/bin/trivy";
+      entry = "${trivy}/bin/trivy";
       args = [
         "-c"
         "trivy.yaml"
@@ -127,7 +139,7 @@ in
       enable = true;
       name = "terraform-docs";
       language = "system";
-      entry = "${pkgs.terraform-docs}/bin/terraform-docs";
+      entry = "${terraformDocs}/bin/terraform-docs";
       args = [
         "-c"
         "./.terraform-docs.yml"
